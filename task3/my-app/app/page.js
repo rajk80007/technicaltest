@@ -30,7 +30,7 @@ export default function Home() {
         <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Submit</button>
       </form>
       <div className="w-[600px] h-10 bg-gray-200 flex items-center p-4 m-5 font-bold text-purple-800">
-          Your Phone Number is : <span className="ml-5 font-serif">{message} </span>
+          Your Response is : <span className="ml-5 font-serif">{message} </span>
       </div>
    </div>
   );
