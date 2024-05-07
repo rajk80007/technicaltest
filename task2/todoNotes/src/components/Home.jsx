@@ -1,23 +1,89 @@
 import React, { useState } from 'react'
+import axiosClient from 'axios'
 
 const Home = () => {
 
+    const deleteNote = (id) => {
+        // alert("delete clicked");
+        axiosClient.post('http://127.0.0.1:8000/api/delete/'+id).then((res)=>{
+            console.log(res);
+            setMessage(res.data.message);
+            setTimeout(() => {
+                setMessage('');
+            }, 2000);
+            // window.location.reload();
+        }).catch((err)=>console.log(err))
+
+    }
+    const [notes, setNotes] = useState([])
+    const getNotes = () => {
+        axiosClient.get('http://127.0.0.1:8000/api/notes').then((res)=>{
+            // console.log(res);
+            setNotes(res.data.data);
+        }).catch((err)=>console.log(err))
+    }
+
+    getNotes();
+   
     const [note, setNote] = useState('')
+    const [content, setContent] = useState('')
+    const [message, setMessage] = useState('')
     const handleSubmit = (e) => {
         e.preventDefault()
         axiosClient.post('http://127.0.0.1:8000/api/create',{
             title:note
-        })
-        console.log(note)
+            ,content:content
+        }).then((res)=>{
+            // console.log(res);
+            setMessage(res.data.message);
+           
+            setTimeout(()=>{
+                setMessage('')
+                
+                // window.location.reload();
+            },2000);
+
+        }).catch((err)=>console.log(err))
+        // console.log(note, content)
+        setContent('')
+        setNote('')
+      
     }
   return (
+    <>
+        {message && <p className='text-green-500 text-center text-xl mt-4'>{message}</p>}
     <div className='flex items-center justify-center w-full'>
-        <form onSubmit={handleSubmit}>
-            <input type="text" placeholder="Take a note..."
+        <form onSubmit={handleSubmit} className='flex flex-col'>
+            <input type="text" placeholder="Title"
             onChange={(e)=>setNote(e.target.value)}
-            className='border-2 border-slate-300 px-4 py-2 my-5 w-[350px] rounded-lg' />
+            name='title'
+            className='border-2 border-slate-300 px-4 py-2 my-5 w-[350px] rounded-lg'
+            value={note} required/>
+            <textarea name="content" id=""
+            className='border-2 border-slate-300 px-4 py-2 my-1 w-[350px] rounded-lg'
+            onChange={(e)=>setContent(e.target.value)}
+            placeholder='Take a note...'
+            rows={5} 
+            value={content} required></textarea>
+            <button className='bg-blue-500 text-white px-4 py-2 rounded-lg mt-2'>Add</button>
         </form>
     </div>
+    <div className='relative grid grid-cols-2 gap-4 md:grid-cols-3 mt-5 mb-10 pb-10 mx-5 '>
+        {notes && notes.map((note)=>{
+            return (
+                <div key={note.id} className='border-2 border-slate-300 px-4 py-2 my-1 rounded-lg'>
+                    {/* <span>{note.id}</span> */}
+                    <h2 className='text-xl font-bold'>{note.title}</h2>
+                    <p>{note.content}</p>
+                    <img src="delete.svg" width={30} height={30} alt="delete"
+                    className='cursor-pointer relative left-[90%] hover:scale-105'
+                    onClick={()=>deleteNote(note.id)} />
+                </div>
+            )
+        })}
+
+    </div>
+            </>
   )
 }
 
