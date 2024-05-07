@@ -11,8 +11,11 @@ export default function Home() {
   const handleSubmit = (e) => {
     e.preventDefault();
     axiosClient.post("https://chimpu.xyz/api/post.php", {phonenumber:phone}).then((res) => {
-      console.log(res.data?.msg);
+      // console.log(res.data?.msg);
       setMessage(res.data?.msg);
+    }).catch((err) => {
+      // console.log(err);
+      setMessage(err);
     });
     setPhone("");
     // console.log(phone);
